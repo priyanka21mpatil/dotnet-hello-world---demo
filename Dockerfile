@@ -1,17 +1,23 @@
-# Use official .NET SDK image to build
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-WORKDIR /app
+WORKDIR /src
 
+# Copy everything
 COPY . .
-RUN dotnet restore
-RUN dotnet publish -c Release -o out
 
-# Build runtime image
+# Change directory into your actual project folder
+WORKDIR /src/hello-world-api
+
+RUN dotnet restore
+RUN dotnet publish -c Release -o /app
+
+# Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
-COPY --from=build /app/out .
+
+COPY --from=build /app .
 
 EXPOSE 80
 
-ENTRYPOINT ["dotnet", "dotnet-hello-world.dll"]
+ENTRYPOINT ["dotnet", "hello-world-api.dll"]
 
