@@ -16,7 +16,7 @@ pipeline {
         AWS_ACCESS_KEY_ID     = credentials('aws-access-key')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
 
-        IMAGE_NAME = "yourdockerhubusername/dotnet-hello-world"
+        IMAGE_NAME = "2111docker/dotnet-hello-world"
         IMAGE_TAG  = "${env.BUILD_NUMBER}"
 
         // Environment-specific settings
