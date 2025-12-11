@@ -21,7 +21,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'main',
+                git branch: 'dev',
                     url: 'https://github.com/priyanka21mpatil/dotnet-hello-world---demo',
                     credentialsId: 'github-creds' // if private
             }
