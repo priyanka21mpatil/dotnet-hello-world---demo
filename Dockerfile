@@ -1,17 +1,17 @@
-# Build stage
+# Build Stage
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
 # Copy everything
 COPY . .
 
-# Change directory into your actual project folder
+# Switch into the project folder
 WORKDIR /src/hello-world-api
 
 RUN dotnet restore
 RUN dotnet publish -c Release -o /app
 
-# Runtime stage
+# Runtime Stage
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 
