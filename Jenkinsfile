@@ -31,7 +31,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git url: 'https://github.com/YOURGITHUBACCOUNT/dotnet-hello-world.git'
+                git url: 'https://github.com/priyanka21mpatil/dotnet-hello-world---demo.git'
             }
         }
 
