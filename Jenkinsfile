@@ -11,7 +11,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "2111docker/dotnet-hello-world"
-        IMAGE_TAG  = "${env.BUILD_NUMBER}"
+        IMAGE_TAG  = "${BUILD_NUMBER}"
 
         UAT_EC2_IP  = "54.226.198.192"
         PROD_EC2_IP = "35.172.199.103"
@@ -22,21 +22,20 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/priyanka21mpatil/dotnet-hello-world---demo'
+                    url: 'https://github.com/priyanka21mpatil/dotnet-hello-world---demo',
+                    credentialsId: 'github-creds' // if private
             }
         }
 
         stage('Verify Docker') {
             steps {
-                sh "/usr/bin/docker --version"
+                sh "docker --version"
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh """
-                    /usr/bin/docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
-                """
+                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
             }
         }
 
@@ -47,10 +46,10 @@ pipeline {
                     usernameVariable: 'DH_USER',
                     passwordVariable: 'DH_PASS'
                 )]) {
-                    sh """
-                        echo "${DH_PASS}" | /usr/bin/docker login -u "${DH_USER}" --password-stdin
-                        /usr/bin/docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                    """
+                    sh '''
+                        echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
+                        docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                    '''
                 }
             }
         }
@@ -63,11 +62,10 @@ pipeline {
 
                     withCredentials([sshUserPrivateKey(
                         credentialsId: KEY_ID,
-                        keyFileVariable: 'SSH_KEY',
-                        usernameVariable: 'SSH_USER'
+                        keyFileVariable: 'SSH_KEY'
                     )]) {
                         sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${SSH_USER}@${TARGET_IP} '
+                            ssh -o StrictHostKeyChecking=no -i \$SSH_KEY ec2-user@${TARGET_IP} '
                                 sudo docker pull ${IMAGE_NAME}:${IMAGE_TAG} &&
                                 sudo docker stop dotnetapp || true &&
                                 sudo docker rm dotnetapp || true &&
@@ -89,7 +87,7 @@ pipeline {
                         if [ "\$STATUS" == "200" ]; then
                             echo "Health check PASSED"
                         else
-                            echo "Health check FAILED"
+                            echo "Health check FAILED with status \$STATUS"
                             exit 1
                         fi
                     """
