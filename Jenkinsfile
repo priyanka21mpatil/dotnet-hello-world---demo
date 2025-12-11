@@ -20,8 +20,8 @@ pipeline {
         IMAGE_TAG  = "${env.BUILD_NUMBER}"
 
         // Environment-specific settings
-        UAT_EC2_IP  = "ec2-uat-public-ip"
-        PROD_EC2_IP = "ec2-prod-public-ip"
+        UAT_EC2_IP  = "54.226.198.192"
+        PROD_EC2_IP = "35.172.199.103"
 
         UAT_SSH_KEY  = credentials('ssh-key-uat')
         PROD_SSH_KEY = credentials('ssh-key-prod')
