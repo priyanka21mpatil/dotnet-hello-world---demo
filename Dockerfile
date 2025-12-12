@@ -5,17 +5,17 @@ WORKDIR /src
 # Copy everything
 COPY . .
 
-# Switch into the project folder
-WORKDIR /src/hello-world-api
+# Restore dependencies using the csproj in root
+RUN dotnet restore "hello-world-api.csproj"
 
-RUN dotnet restore
-RUN dotnet publish -c Release -o /app
+# Publish
+RUN dotnet publish "hello-world-api.csproj" -c Release -o /out
 
 # Runtime Stage
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 
-COPY --from=build /app .
+COPY --from=build /out .
 
 EXPOSE 80
 
